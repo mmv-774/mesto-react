@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../utils/api.js';
 import Card from './Card.js';
 
-function Main({ onEditProfile, onAddPlace, onEditAvatar }) {
+function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
   const [userName, setUserName] = useState(null);
   const [userDescription, setUserDescription] = useState(null);
   const [userAvatar, setUserAvatar] = useState(null);
@@ -52,7 +52,7 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar }) {
       </section>
       <div className='cards horizontal-aligned-block'>
         {cards.map((card) => (
-          <Card card={card} key={card._id} />
+          <Card card={card} onCardClick={onCardClick} key={card._id} />
         ))}
       </div>
     </main>
