@@ -22,15 +22,11 @@ class Api {
     });
   }
 
-  _getCards() {
+  getCards() {
     return this._sendRequest('cards', {
       headers: this._headers,
     });
   }
-
-  // getUserPage() {
-  //   return Promise.all([this._getUserInfo(), this._getCards()]);
-  // }
 
   patchUserInfo({ name, about }) {
     return this._sendRequest('users/me', {

@@ -8,6 +8,7 @@ function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null);
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
@@ -21,14 +22,19 @@ function App() {
     setIsEditAvatarPopupOpen(true);
   }
 
+  function handleCardClick(){
+    
+  }
+
   function closeAllPopups() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
+    setSelectedCard(null);
   }
 
   return (
-    <body className='page'>
+    <div className='page'>
       <Header />
       <Main
         onEditProfile={handleEditProfileClick}
@@ -43,50 +49,56 @@ function App() {
         onClose={closeAllPopups}
       >
         <fieldset className='form__fieldset form__fieldset_type_input'>
-          <label for='user-name' className='form__label'>
+          <label htmlFor='user-name' className='form__label'>
             <input
               type='text'
               required
               id='user-name'
               name='user-name'
               placeholder='Ваше имя'
-              minlength='2'
-              maxlength='40'
+              minLength={2}
+              maxLength={40}
               className='form__input user-name-input'
             />
-            <span className='form__input-error user-name-input-error'></span>
+            <span className='form__input-error user-name-input-error' />
           </label>
-          <label for='user-profession' className='form__label'>
+          <label htmlFor='user-profession' className='form__label'>
             <input
               type='text'
               required
               id='user-profession'
               name='user-profession'
               placeholder='Ваша профессия'
-              minlength='2'
-              maxlength='200'
+              minLength={2}
+              maxLength={200}
               className='form__input user-profession-input'
             />
-            <span className='form__input-error user-profession-input-error'></span>
+            <span className='form__input-error user-profession-input-error' />
           </label>
         </fieldset>
       </PopupWithForm>
-      <PopupWithForm title={'Новое место'} name={'card-popup'} isOpen={isAddPlacePopupOpen} submitCaption={'Создать'}>
+      <PopupWithForm
+        title={'Новое место'}
+        name={'card-popup'}
+        isOpen={isAddPlacePopupOpen}
+        submitCaption={'Создать'}
+        onClose={closeAllPopups}
+      >
         <fieldset className='form__fieldset form__fieldset_type_input'>
-          <label for='card-name' className='form__label'>
+          <label htmlFor='card-name' className='form__label'>
             <input
               type='text'
               required
               id='card-name'
               name='card-name'
               placeholder='Название'
-              minlength='2'
-              maxlength='30'
+              minLength={2}
+              maxLength={30}
               className='form__input card-name-input'
             />
-            <span className='form__input-error card-name-input-error'></span>
+            <span className='form__input-error card-name-input-error' />
           </label>
-          <label for='card-link' className='form__label'>
+          <label htmlFor='card-link' className='form__label'>
             <input
               type='url'
               required
@@ -95,13 +107,18 @@ function App() {
               placeholder='Ссылка на картинку'
               className='form__input card-link-input'
             />
-            <span className='form__input-error card-link-input-error'></span>
+            <span className='form__input-error card-link-input-error' />
           </label>
         </fieldset>
       </PopupWithForm>
-      <PopupWithForm title={'Обновить аватар'} name={'avatar-popup'} isOpen={isEditAvatarPopupOpen}>
+      <PopupWithForm
+        title={'Обновить аватар'}
+        name={'avatar-popup'}
+        isOpen={isEditAvatarPopupOpen}
+        onClose={closeAllPopups}
+      >
         <fieldset className='form__fieldset form__fieldset_type_input'>
-          <label for='avatar-link' className='form__label'>
+          <label htmlFor='avatar-link' className='form__label'>
             <input
               type='url'
               required
@@ -110,11 +127,11 @@ function App() {
               placeholder='Ссылка на картинку'
               className='form__input avatar-link-input'
             />
-            <span className='form__input-error avatar-link-input-error'></span>
+            <span className='form__input-error avatar-link-input-error' />
           </label>
         </fieldset>
       </PopupWithForm>
-    </body>
+    </div>
   );
 }
 

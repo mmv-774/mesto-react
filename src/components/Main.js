@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../utils/api.js';
+import Card from './Card.js';
 
 function Main({ onEditProfile, onAddPlace, onEditAvatar }) {
   const [userName, setUserName] = useState(null);
   const [userDescription, setUserDescription] = useState(null);
   const [userAvatar, setUserAvatar] = useState(null);
+  const [cards, setCards] = useState([]);
 
   useEffect(() => {
     api
@@ -17,11 +19,20 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar }) {
       .catch((error) => console.log(error));
   }, []);
 
+  useEffect(() => {
+    api
+      .getCards()
+      .then((res) => {
+        setCards(res);
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
   return (
     <main className='content'>
       <section className='profile horizontal-aligned-block'>
         <div className='profile__avatar-overlay'>
-          <img src={`${userAvatar}`} alt='Аватар пользователя.' className='profile__avatar' />
+          <img className='profile__avatar' src={`${userAvatar}`} alt='Аватар пользователя.' />
           <button className='profile__btn profile__btn_action_avatar-edit' onClick={onEditAvatar}></button>
         </div>
         <div className='profile__info'>
@@ -39,7 +50,11 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar }) {
           onClick={onAddPlace}
         ></button>
       </section>
-      <div className='cards horizontal-aligned-block'></div>
+      <div className='cards horizontal-aligned-block'>
+        {cards.map((card) => (
+          <Card card={card} key={card._id} />
+        ))}
+      </div>
     </main>
   );
 }
