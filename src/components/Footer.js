@@ -3,7 +3,7 @@ import React from 'react';
 function Footer() {
   return (
     <footer className='footer horizontal-aligned-block'>
-      <p className='footer__copyright'>&copy;&nbsp;2021. Мезенцев Михаил</p>
+      <p className='footer__copyright'>&copy;&nbsp;{new Date().getFullYear()}. Мезенцев Михаил</p>
     </footer>
   );
 }
