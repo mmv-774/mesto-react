@@ -4,6 +4,7 @@ import Main from './Main.js';
 import Footer from './Footer.js';
 import PopupWithForm from './PopupWithForm.js';
 import ImagePopup from './ImagePopup.js';
+import EditProfilePopup from './EditProfilePopup.js';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import { api } from '../utils/api.js';
 
@@ -46,6 +47,16 @@ function App() {
     setSelectedCard(null);
   }
 
+  function handleUpdateUser(user) {
+    api
+      .patchUserInfo(user)
+      .then((res) => {
+        setCurrentUser(res);
+      })
+      .catch((error) => console.log(error))
+      .finally(closeAllPopups);
+  }
+
   return (
     <div className='page'>
       <CurrentUserContext.Provider value={currentUser}>
@@ -57,41 +68,7 @@ function App() {
           onCardClick={handleCardClick}
         />
         <Footer />
-        <PopupWithForm
-          title={'Редактировать профиль'}
-          name={'profile-popup'}
-          isOpen={isEditProfilePopupOpen}
-          onClose={closeAllPopups}
-        >
-          <fieldset className='form__fieldset form__fieldset_type_input'>
-            <label htmlFor='user-name' className='form__label'>
-              <input
-                type='text'
-                required
-                id='user-name'
-                name='user-name'
-                placeholder='Ваше имя'
-                minLength={2}
-                maxLength={40}
-                className='form__input user-name-input'
-              />
-              <span className='form__input-error user-name-input-error' />
-            </label>
-            <label htmlFor='user-profession' className='form__label'>
-              <input
-                type='text'
-                required
-                id='user-profession'
-                name='user-profession'
-                placeholder='Ваша профессия'
-                minLength={2}
-                maxLength={200}
-                className='form__input user-profession-input'
-              />
-              <span className='form__input-error user-profession-input-error' />
-            </label>
-          </fieldset>
-        </PopupWithForm>
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
         <PopupWithForm
           title={'Новое место'}
           name={'card-popup'}
