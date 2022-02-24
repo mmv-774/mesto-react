@@ -5,6 +5,7 @@ import Footer from './Footer.js';
 import PopupWithForm from './PopupWithForm.js';
 import ImagePopup from './ImagePopup.js';
 import EditProfilePopup from './EditProfilePopup.js';
+import EditAvatarPopup from './EditAvatarPopup.js';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import { api } from '../utils/api.js';
 
@@ -47,14 +48,21 @@ function App() {
     setSelectedCard(null);
   }
 
-  function handleUpdateUser(user) {
-    api
-      .patchUserInfo(user)
+  function handleUpdateUser(promise) {
+    promise
       .then((res) => {
         setCurrentUser(res);
       })
       .catch((error) => console.log(error))
       .finally(closeAllPopups);
+  }
+
+  function handleUpdateUserInfo(userInfo) {
+    handleUpdateUser(api.patchUserInfo(userInfo));
+  }
+
+  function handleUpdateUserAvatar({ avatar }) {
+    handleUpdateUser(api.patchAvatar(avatar));
   }
 
   return (
@@ -68,7 +76,11 @@ function App() {
           onCardClick={handleCardClick}
         />
         <Footer />
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
+        <EditProfilePopup
+          isOpen={isEditProfilePopupOpen}
+          onClose={closeAllPopups}
+          onUpdateUser={handleUpdateUserInfo}
+        />
         <PopupWithForm
           title={'Новое место'}
           name={'card-popup'}
@@ -103,26 +115,11 @@ function App() {
             </label>
           </fieldset>
         </PopupWithForm>
-        <PopupWithForm
-          title={'Обновить аватар'}
-          name={'avatar-popup'}
+        <EditAvatarPopup
           isOpen={isEditAvatarPopupOpen}
           onClose={closeAllPopups}
-        >
-          <fieldset className='form__fieldset form__fieldset_type_input'>
-            <label htmlFor='avatar-link' className='form__label'>
-              <input
-                type='url'
-                required
-                id='avatar-link'
-                name='avatar-link'
-                placeholder='Ссылка на картинку'
-                className='form__input avatar-link-input'
-              />
-              <span className='form__input-error avatar-link-input-error' />
-            </label>
-          </fieldset>
-        </PopupWithForm>
+          onUpdateAvatar={handleUpdateUserAvatar}
+        />
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
       </CurrentUserContext.Provider>
     </div>
