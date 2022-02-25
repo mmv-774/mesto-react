@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import Header from './Header.js';
 import Main from './Main.js';
 import Footer from './Footer.js';
-import PopupWithForm from './PopupWithForm.js';
 import ImagePopup from './ImagePopup.js';
 import EditProfilePopup from './EditProfilePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
+import AddPlacePopup from './AddPlacePopup.js';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import { api } from '../utils/api.js';
+import { handleResponse } from '../utils/utils.js';
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -15,14 +16,14 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [currentUser, setCurrentUser] = useState({});
+  const [cards, setCards] = useState([]);
 
   useEffect(() => {
-    api
-      .getUserInfo()
-      .then((res) => {
-        setCurrentUser(res);
-      })
-      .catch((error) => console.log(error));
+    handleResponse(api.getUserInfo(), (res) => setCurrentUser(res));
+  }, []);
+
+  useEffect(() => {
+    handleResponse(api.getCards(), (res) => setCards(res));
   }, []);
 
   function handleEditProfileClick() {
@@ -48,13 +49,11 @@ function App() {
     setSelectedCard(null);
   }
 
-  function handleUpdateUser(promise) {
-    promise
-      .then((res) => {
-        setCurrentUser(res);
-      })
-      .catch((error) => console.log(error))
-      .finally(closeAllPopups);
+  function handleUpdateUser(executor) {
+    handleResponse(executor, (res) => {
+      setCurrentUser(res);
+      closeAllPopups();
+    });
   }
 
   function handleUpdateUserInfo(userInfo) {
@@ -65,15 +64,39 @@ function App() {
     handleUpdateUser(api.patchAvatar(avatar));
   }
 
+  function handleCardLike(card) {
+    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+
+    handleResponse(api.setLike(card._id, isLiked), (res) => {
+      setCards((state) => state.map((c) => (c._id === card._id ? res : c)));
+    });
+  }
+
+  function handleCardDelete(card) {
+    handleResponse(api.deleteCard(card._id), () => {
+      setCards((state) => state.filter((c) => c._id !== card._id));
+    });
+  }
+
+  function handleAddPlace(card) {
+    handleResponse(api.postNewCard(card), (res) => {
+      setCards([res, ...cards]);
+      closeAllPopups();
+    });
+  }
+
   return (
     <div className='page'>
       <CurrentUserContext.Provider value={currentUser}>
         <Header />
         <Main
+          cards={cards}
           onEditProfile={handleEditProfileClick}
           onAddPlace={handleAddPlaceClick}
           onEditAvatar={handleEditAvatarClick}
           onCardClick={handleCardClick}
+          onCardLike={handleCardLike}
+          onCardDelete={handleCardDelete}
         />
         <Footer />
         <EditProfilePopup
@@ -81,40 +104,7 @@ function App() {
           onClose={closeAllPopups}
           onUpdateUser={handleUpdateUserInfo}
         />
-        <PopupWithForm
-          title={'Новое место'}
-          name={'card-popup'}
-          isOpen={isAddPlacePopupOpen}
-          submitCaption={'Создать'}
-          onClose={closeAllPopups}
-        >
-          <fieldset className='form__fieldset form__fieldset_type_input'>
-            <label htmlFor='card-name' className='form__label'>
-              <input
-                type='text'
-                required
-                id='card-name'
-                name='card-name'
-                placeholder='Название'
-                minLength={2}
-                maxLength={30}
-                className='form__input card-name-input'
-              />
-              <span className='form__input-error card-name-input-error' />
-            </label>
-            <label htmlFor='card-link' className='form__label'>
-              <input
-                type='url'
-                required
-                id='card-link'
-                name='card-link'
-                placeholder='Ссылка на картинку'
-                className='form__input card-link-input'
-              />
-              <span className='form__input-error card-link-input-error' />
-            </label>
-          </fieldset>
-        </PopupWithForm>
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlace} />
         <EditAvatarPopup
           isOpen={isEditAvatarPopupOpen}
           onClose={closeAllPopups}
