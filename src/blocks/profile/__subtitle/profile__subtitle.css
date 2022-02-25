@@ -4,7 +4,6 @@
   margin: 0;
   font-size: 18px;
   font-weight: 400;
-  -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;

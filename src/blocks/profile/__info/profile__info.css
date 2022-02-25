@@ -1,9 +1,6 @@
 .profile__info {
   max-width: 336px;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -ms-flex-wrap: wrap;
   flex-wrap: wrap;
   gap: 13px 18px;
 }
@@ -12,8 +9,6 @@
   .profile__info {
     margin-top: 26px;
     gap: 14px 10px;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
     justify-content: center;
     text-align: center;
   }
